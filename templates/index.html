@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>📈 Stock Market Analyzer</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* ===========================
+        🔥 GLOBAL THEME
+        =========================== */
+
+        body {
+            background: radial-gradient(circle at top, #1e1f26, #0f1115, #000000);
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            transition: 0.3s ease-in-out;
+        }
+
+        /* ===========================
+        🧊 MAIN CONTAINER (Glass Card)
+        =========================== */
+
+        .container-box {
+            max-width: 920px;
+            margin: 50px auto;
+            padding: 35px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.55);
+        }
+
+
+        /* ===========================
+        🎯 App Title + Glow Accent
+        =========================== */
+        .app-title {
+            font-size: 34px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+
+        .app-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #0affc6, #0097ff);
+            margin: 8px auto 0;
+            border-radius: 4px;
+        }
+
+        /* ===========================
+        🔽 Dropdown Styling
+        =========================== */
+        select {
+            background: #1b1d23;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        select option {
+            background: #0e0f11;
+            color: white;
+        }
+
+        /* ===========================
+        🚀 Neon Analyze Button
+        =========================== */
+
+        .btn-analyze {
+            background: linear-gradient(135deg, #0affc6, #0097ff);
+            border: none;
+            padding: 18px;
+            width: 100%;
+            border-radius: 14px;
+            font-size: 19px;
+            font-weight: 600;
+            color: white;
+            margin-top: 18px;
+            box-shadow: 0 6px 22px rgba(0, 195, 255, 0.3);
+            transition: 0.25s ease;
+        }
+
+        .btn-analyze:hover {
+            cursor: pointer;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 195, 255, 0.45);
+        }
+
+        .btn-analyze:active {
+            transform: scale(0.97);
+        }
+
+        /* ===========================
+        📌 Result Signal Box Styles
+        =========================== */
+
+        .signal-box {
+            padding: 18px;
+            margin-top: 22px;
+            border-radius: 14px;
+            font-size: 20px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .buy {
+            background: rgba(0, 255, 135, 0.15);
+            color: #00ff87;
+        }
+
+        .sell {
+            background: rgba(255, 56, 56, 0.15);
+            color: #ff3d3d;
+        }
+
+        .neutral {
+            background: rgba(255, 214, 86, 0.15);
+            color: #ffd556;
+        }
+
+        /* ===========================
+        📊 Chart Styling
+        =========================== */
+
+        img {
+            background-color: #14161b;
+            padding: 12px;
+            border-radius: 16px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-top: 22px;
+        }
+
+        /* ===========================
+        ℹ️ Footer
+        =========================== */
+
+        .footer {
+            margin-top: 45px;
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.55;
+            letter-spacing: 0.4px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-box">
+
+    <div class="app-title">📈 Stock Market Analyzer</div>
+
+    <form method="POST">
+        <label class="fw-bold">Select Stock</label>
+        <select name="ticker" class="form-select mt-2" required>
+            <option value="RELIANCE.NS">Reliance Industries</option>
+            <option value="TCS.NS">TCS</option>
+            <option value="HDFCBANK.NS">HDFC Bank</option>
+            <option value="INFY.NS">Infosys</option>
+            <option value="ITC.NS">ITC Ltd</option>
+            <option value="TATAMOTORS.NS">Tata Motors</option>
+            <option value="LT.NS">L&T</option>
+            <option value="HINDUNILVR.NS">Hindustan Unilever</option>
+            <option value="ADANIENT.NS">Adani Enterprises</option>
+            <option value="SBIN.NS">State Bank of India</option>
+        </select>
+
+        <button class="btn-analyze mt-3">Analyze</button>
+    </form>
+
+    {% if result %}
+        {% if 'BUY' in result %}
+            <div class="signal-box buy">{{ result }}</div>
+        {% elif 'SELL' in result %}
+            <div class="signal-box sell">{{ result }}</div>
+        {% else %}
+            <div class="signal-box neutral">
+            {{ result }} <br>
+            <small style="opacity:0.7;">(Model-Based Forecast)</small>
+        </div>
+
+        {% endif %}
+    {% endif %}
+
+    {% if chart %}
+        <img src="{{ chart }}" class="img-fluid mt-3">
+
+        <a href="/download-chart?file={{ chart }}" 
+        class="btn btn-outline-primary mt-3 w-100">
+            📥 Download Chart
+        </a>
+    {% endif %}
+
+    <!-- 🔥 Add ML Trend Chart Here -->
+    {% if prediction_chart %}
+        <h5 class="mt-4 text-center">📉 ML Prediction vs Actual Trend</h5>
+        <img src="{{ prediction_chart }}" class="img-fluid mt-3">
+    {% endif %}
+
+
+    {% if selected_stock %}
+        <p class="info">Selected: <strong>{{ selected_stock }}</strong></p>
+    {% endif %}
+
+</div>
+
+<p class="footer">© 2025 Stock Analyzer — Powered by Python, Selenium & Flask</p>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
